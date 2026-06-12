@@ -1,131 +1,240 @@
-<h1 align="center">🚀 Terraform Azure Infrastructure Automation</h1>
+# 🌐 Azure Infrastructure Automation with Terraform
 
 <p align="center">
-  <img src="https://cdn-icons-png.flaticon.com/512/873/873120.png" width="90" alt="Terraform Logo"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=240&text=Azure%20Infrastructure%20Automation&fontSize=40&fontAlignY=40&desc=Terraform%20%7C%20Azure%20%7C%20Modular%20Infrastructure&descAlignY=60&fontColor=ffffff&animation=fadeIn&color=0:0078D4,50:623CE4,100:0D1117"/>
 </p>
 
 <p align="center">
-  This repository automates the creation and management of <b>Azure Cloud Infrastructure</b> using <b>Terraform</b>.<br>
-  It follows a <b>modular structure</b> for better reusability, scalability, and maintainability.
+  <img src="https://img.shields.io/badge/Terraform-623CE4?style=for-the-badge&logo=terraform&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Microsoft%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white"/>
+  <img src="https://img.shields.io/badge/IaC-Infrastructure%20as%20Code-success?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Status-Production%20Ready-22C55E?style=for-the-badge"/>
 </p>
 
-<hr>
+---
 
-<h2>📂 Project Structure</h2>
+## 📌 Overview
 
-<pre>
+This project automates the deployment of a complete Azure infrastructure using Terraform modules.
+
+The architecture follows Infrastructure as Code (IaC) principles and demonstrates how to provision networking, compute, database, and secure access resources in a reusable and scalable manner.
+
+### Resources Provisioned
+
+* Resource Group
+* Virtual Network
+* Subnets
+* Public IP
+* Virtual Machine
+* Azure Bastion
+* Azure SQL Server
+* Azure SQL Database
+
+---
+
+## 🏗️ Architecture
+
+```text
+Azure Cloud
+│
+├── Resource Group
+│
+├── Virtual Network
+│   └── Subnets
+│
+├── Public IP
+│
+├── Virtual Machine
+│
+├── Azure Bastion
+│
+└── Azure SQL
+    ├── SQL Server
+    └── SQL Database
+```
+
+---
+
+## ✨ Key Features
+
+| Feature                   | Description                            |
+| ------------------------- | -------------------------------------- |
+| ☁️ Azure Infrastructure   | Complete cloud resource provisioning   |
+| 🏗️ Modular Design        | Independent reusable Terraform modules |
+| 🔐 Secure Access          | Azure Bastion for VM connectivity      |
+| 💻 Compute Resources      | Azure Virtual Machines                 |
+| 🗄️ Database Layer        | Azure SQL Server & Database            |
+| 🔄 Infrastructure as Code | Automated deployments with Terraform   |
+
+---
+
+## 📊 Infrastructure Components
+
+| Service         | Purpose                        |
+| --------------- | ------------------------------ |
+| Resource Group  | Resource organization          |
+| Virtual Network | Network isolation              |
+| Subnets         | Segmented network architecture |
+| Public IP       | External connectivity          |
+| Virtual Machine | Compute workload               |
+| Azure Bastion   | Secure RDP/SSH access          |
+| SQL Server      | Managed database service       |
+| SQL Database    | Application data storage       |
+
+---
+
+## 📂 Repository Structure
+
+```text
 .
-├── Environment
+├── Environment/
 │   ├── main.tf
 │   └── provider.tf
 │
-└── Module
-    ├── azurerm_bastion
-    ├── azurerm_mssql_database
-    ├── azurerm_mssql_server
-    ├── azurerm_public_ip
-    ├── azurerm_resource_group
-    ├── azurerm_subnet
-    ├── azurerm_virtual_machine
-    └── azurerm_virtual_network
-</pre>
+├── Module/
+│   ├── azurerm_resource_group/
+│   ├── azurerm_virtual_network/
+│   ├── azurerm_subnet/
+│   ├── azurerm_public_ip/
+│   ├── azurerm_virtual_machine/
+│   ├── azurerm_bastion/
+│   ├── azurerm_mssql_server/
+│   └── azurerm_mssql_database/
+│
+└── README.md
+```
 
-<hr>
+---
 
-<h2>🧩 Module Description</h2>
-
-<ul>
-  <li><b>azurerm_resource_group</b> → Creates Azure Resource Group to hold all resources.</li>
-  <li><b>azurerm_virtual_network</b> → Defines Virtual Network for internal resource communication.</li>
-  <li><b>azurerm_subnet</b> → Creates Subnets inside the Virtual Network.</li>
-  <li><b>azurerm_public_ip</b> → Allocates Public IP for external connectivity.</li>
-  <li><b>azurerm_virtual_machine</b> → Deploys Azure Virtual Machine for workloads.</li>
-  <li><b>azurerm_bastion</b> → Deploys an Azure Bastion Host that provides secure RDP/SSH access to Virtual Machines directly through the Azure Portal, without exposing any public IPs.</li>
-  <li><b>azurerm_mssql_server</b> → Creates MSSQL Server instance to host databases.</li>
-  <li><b>azurerm_mssql_database</b> → Creates Database inside the SQL Server for application data.</li>
-</ul>
-
-<hr>
-
-<h2>⚙️ How to Use</h2>
-
-<ol>
-  <li>Clone the repository:
-    <pre><code>git clone &lt;repo-url&gt;</code></pre>
-  </li>
-  <li>Navigate to the <code>Environment</code> folder:
-    <pre><code>cd Environment</code></pre>
-  </li>
-  <li>Initialize Terraform:
-    <pre><code>terraform init</code></pre>
-  </li>
-  <li>Preview the planned changes:
-    <pre><code>terraform plan</code></pre>
-  </li>
-  <li>Apply the configuration to create Azure resources:
-    <pre><code>terraform apply -auto-approve</code></pre>
-  </li>
-</ol>
-
-<hr>
-
-<h2>🧠 Key Concepts</h2>
-
-<ul>
-  <li><b>Modular Design</b> → Each component is isolated as a module for reuse and maintainability.</li>
-  <li><b>State Management</b> → Terraform keeps track of deployed resources through state files.</li>
-  <li><b>Idempotency</b> → Re-running configurations ensures consistent infrastructure deployment.</li>
-</ul>
-
-<hr>
-
-<h2>🛡️ Azure Bastion Overview</h2>
-
-<p>
-  The <b>Azure Bastion</b> service allows you to securely connect to your virtual machines over SSL directly from the Azure portal without the need for a public IP address on the VM.<br><br>
-  <b>Key Benefits:</b>
-</p>
-
-<ul>
-  <li>No public IP exposure on Virtual Machines.</li>
-  <li>Secure RDP and SSH connectivity through Azure portal.</li>
-  <li>Managed service by Microsoft, reducing maintenance overhead.</li>
-  <li>Seamless access from browsers with enhanced security.</li>
-</ul>
-
-<hr>
-
-<h2>📜 Prerequisites</h2>
-
-<ul>
-  <li>Terraform v1.5 or later</li>
-  <li>Azure CLI installed and logged in</li>
-  <li>Valid Azure Subscription</li>
-</ul>
-
-<hr>
-
-<h2>💡 Best Practices</h2>
-
-<ul>
-  <li>Use remote backend (e.g., Azure Storage Account) for Terraform state files.</li>
-  <li>Follow consistent naming conventions for Azure resources.</li>
-  <li>Define input variables and outputs for modularity and dynamic configurations.</li>
-  <li>Use tags for cost management and organization.</li>
-</ul>
-
-<hr>
-
-<h2>🤝 Contribution</h2>
-
-<p>
-  Contributions are always welcome!<br>
-  If you’d like to improve or extend this project, please fork the repository and submit a pull request.
-</p>
-
-<hr>
+## 🛠️ Technology Stack
 
 <p align="center">
-  Made with ❤️ using <b>Terraform</b> and <b>Microsoft Azure</b>.<br>
-  <i>Automate • Deploy • Scale</i>
+  <img src="https://skillicons.dev/icons?i=terraform,azure,git,github,vscode"/>
+</p>
+
+---
+
+## 🚀 Deployment Steps
+
+### Clone Repository
+
+```bash
+git clone <repository-url>
+cd Environment
+```
+
+### Initialize Terraform
+
+```bash
+terraform init
+```
+
+### Validate Configuration
+
+```bash
+terraform validate
+```
+
+### Generate Execution Plan
+
+```bash
+terraform plan
+```
+
+### Deploy Infrastructure
+
+```bash
+terraform apply -auto-approve
+```
+
+---
+
+## 🔐 Azure Bastion Benefits
+
+Azure Bastion provides secure browser-based access to Azure Virtual Machines without exposing public IP addresses.
+
+### Advantages
+
+* No public IP on VMs
+* Secure RDP & SSH connectivity
+* Azure Portal integration
+* Reduced attack surface
+* Managed Azure service
+
+---
+
+## 📜 Prerequisites
+
+Before deploying this project:
+
+* Terraform v1.5+
+* Azure CLI installed
+* Active Azure Subscription
+* Authenticated Azure account
+
+```bash
+az login
+```
+
+---
+
+## 💡 Best Practices Implemented
+
+* Modular Terraform architecture
+* Infrastructure as Code (IaC)
+* Reusable components
+* Secure VM access through Bastion
+* Resource isolation using VNets and Subnets
+* Consistent resource deployment
+
+---
+
+## 📈 Learning Outcomes
+
+* Terraform Module Development
+* Azure Networking
+* Azure Virtual Machines
+* Azure Bastion
+* Azure SQL Services
+* Infrastructure Automation
+* Cloud Security Fundamentals
+
+---
+
+## 🎯 Project Highlights
+
+<p align="center">
+
+<img src="https://img.shields.io/badge/Modular-Terraform-623CE4?style=for-the-badge"/>
+
+<img src="https://img.shields.io/badge/Azure-Bastion-0078D4?style=for-the-badge"/>
+
+<img src="https://img.shields.io/badge/Azure-SQL-success?style=for-the-badge"/>
+
+<img src="https://img.shields.io/badge/IaC-Automation-orange?style=for-the-badge"/>
+
+</p>
+
+---
+
+## 👩‍💻 Author
+
+**Priya Jaiswal**
+
+Azure Cloud | DevOps | Terraform
+
+<p align="center">
+  <a href="https://github.com/Pjaisw1103">
+    <img src="https://img.shields.io/badge/GitHub-Pjaisw1103-181717?style=for-the-badge&logo=github"/>
+  </a>
+
+  <a href="https://linkedin.com/in/priya-jaiswal1103">
+    <img src="https://img.shields.io/badge/LinkedIn-Priya%20Jaiswal-0078D4?style=for-the-badge&logo=linkedin"/>
+  </a>
+</p>
+
+---
+
+<p align="center">
+⭐ If you found this project useful, consider giving it a star.
 </p>
