@@ -1,240 +1,188 @@
-# 🌐 Azure Infrastructure Automation with Terraform
+# Azure Infrastructure Automation with Terraform
 
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&height=240&text=Azure%20Infrastructure%20Automation&fontSize=40&fontAlignY=40&desc=Terraform%20%7C%20Azure%20%7C%20Modular%20Infrastructure&descAlignY=60&fontColor=ffffff&animation=fadeIn&color=0:0078D4,50:623CE4,100:0D1117"/>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Terraform-623CE4?style=for-the-badge&logo=terraform&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Microsoft%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white"/>
-  <img src="https://img.shields.io/badge/IaC-Infrastructure%20as%20Code-success?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Status-Production%20Ready-22C55E?style=for-the-badge"/>
-</p>
+A modular Terraform configuration for provisioning secure, scalable Azure cloud infrastructure. This project automates the deployment of network isolation, virtual machine compute instances, database services, and secure remote management via Azure Bastion.
 
 ---
 
-## 📌 Overview
+## Table of Contents
 
-This project automates the deployment of a complete Azure infrastructure using Terraform modules.
-
-The architecture follows Infrastructure as Code (IaC) principles and demonstrates how to provision networking, compute, database, and secure access resources in a reusable and scalable manner.
-
-### Resources Provisioned
-
-* Resource Group
-* Virtual Network
-* Subnets
-* Public IP
-* Virtual Machine
-* Azure Bastion
-* Azure SQL Server
-* Azure SQL Database
+- [Architecture Overview](#architecture-overview)
+- [Key Features](#key-features)
+- [Infrastructure Components](#infrastructure-components)
+- [Repository Structure](#repository-structure)
+- [Prerequisites](#prerequisites)
+- [Deployment Guide](#deployment-guide)
+- [Security Features](#security-features)
+- [Author](#author)
 
 ---
 
-## 🏗️ Architecture
+## Architecture Overview
 
 ```text
-Azure Cloud
-│
-├── Resource Group
-│
-├── Virtual Network
-│   └── Subnets
-│
-├── Public IP
-│
-├── Virtual Machine
-│
-├── Azure Bastion
-│
-└── Azure SQL
-    ├── SQL Server
-    └── SQL Database
+                               ┌──────────────────────────────────────────┐
+                               │            Azure Resource Group          │
+                               │                (rg-demo)                 │
+                               └────────────────────┬─────────────────────┘
+                                                    │
+                 ┌──────────────────────────────────┴──────────────────────────────────┐
+                 │                                                                     │
+                 ▼                                                                     ▼
+    ┌─────────────────────────┐                                           ┌─────────────────────────┐
+    │     Virtual Network     │                                           │    Azure SQL Services   │
+    │      (vnet-infra)       │                                           │                         │
+    └────────────┬────────────┘                                           ├─────────────────────────┤
+                 │                                                        │ • MSSQL Server          │
+        ┌────────┴────────────────────────┐                               │   (infra-server)        │
+        │                                 │                               │                         │
+        ▼                                 ▼                               │ • MSSQL Database        │
+┌───────────────┐                 ┌───────────────┐                       │   (infra-database)      │
+│     Subnet    │                 │ Azure Bastion │                       └─────────────────────────┘
+│(subnet-front) │                 │    Subnet     │
+└───────┬───────┘                 └───────┬───────┘
+        │                                 │
+        ▼                                 ▼
+┌───────────────┐                 ┌───────────────┐
+│ Virtual       │                 │ Azure Bastion │ ◄── Public IP
+│ Machines      │                 │ (demo-bastion)│     (pip-bastion)
+│ (vm01, vm02)  │                 └───────────────┘
+└───────────────┘
 ```
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-| Feature                   | Description                            |
-| ------------------------- | -------------------------------------- |
-| ☁️ Azure Infrastructure   | Complete cloud resource provisioning   |
-| 🏗️ Modular Design        | Independent reusable Terraform modules |
-| 🔐 Secure Access          | Azure Bastion for VM connectivity      |
-| 💻 Compute Resources      | Azure Virtual Machines                 |
-| 🗄️ Database Layer        | Azure SQL Server & Database            |
-| 🔄 Infrastructure as Code | Automated deployments with Terraform   |
+- **Modular Architecture**: Built with reusable and independent Terraform modules under `Module/`.
+- **Zero-Public-IP VMs**: Compute workloads are completely isolated within internal subnets.
+- **Secure Access**: Native Azure Bastion deployment for SSH/RDP connectivity without exposed public IP addresses.
+- **Database Provisioning**: Automated Azure MSSQL Server and Database setup.
+- **Scalable Design**: Easily extendable structure to add additional VM nodes or subnets.
 
 ---
 
-## 📊 Infrastructure Components
+## Infrastructure Components
 
-| Service         | Purpose                        |
-| --------------- | ------------------------------ |
-| Resource Group  | Resource organization          |
-| Virtual Network | Network isolation              |
-| Subnets         | Segmented network architecture |
-| Public IP       | External connectivity          |
-| Virtual Machine | Compute workload               |
-| Azure Bastion   | Secure RDP/SSH access          |
-| SQL Server      | Managed database service       |
-| SQL Database    | Application data storage       |
+| Resource Module | Module Source | Description |
+| :--- | :--- | :--- |
+| **Resource Group** | `Module/azurerm_resource_group` | Central logical container for all Azure deployment resources |
+| **Virtual Network** | `Module/azurerm_virtual_network` | Primary private network boundary (`vnet-infra`) |
+| **Subnets** | `Module/azurerm_subnet` | Workload subnet (`subnet-frontend`) and `AzureBastionSubnet` |
+| **Public IP** | `Module/azurerm_public_ip` | Dedicated Public IP assigned exclusively to Azure Bastion |
+| **Virtual Machines** | `Module/azurerm_virtual_machine` | Virtual machine compute instances (`vm01`, `vm02`) |
+| **Azure Bastion** | `Module/azurerm_bastion` | PaaS Bastion host for secure browser-based remote access |
+| **MSSQL Server** | `Module/azurerm_mssql_server` | Fully managed Azure SQL database server instance |
+| **MSSQL Database** | `Module/azurerm_mssql_database` | Relational SQL database hosted within the SQL Server |
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 .
 ├── Environment/
-│   ├── main.tf
-│   └── provider.tf
+│   ├── main.tf          # Core infrastructure deployment configuration
+│   └── provider.tf      # AzureRM provider configuration & required versions
 │
 ├── Module/
-│   ├── azurerm_resource_group/
-│   ├── azurerm_virtual_network/
-│   ├── azurerm_subnet/
-│   ├── azurerm_public_ip/
-│   ├── azurerm_virtual_machine/
-│   ├── azurerm_bastion/
-│   ├── azurerm_mssql_server/
-│   └── azurerm_mssql_database/
+│   ├── azurerm_bastion/          # Azure Bastion module
+│   ├── azurerm_mssql_database/   # Azure SQL Database module
+│   ├── azurerm_mssql_server/     # Azure SQL Server module
+│   ├── azurerm_public_ip/        # Public IP module
+│   ├── azurerm_resource_group/   # Resource Group module
+│   ├── azurerm_subnet/           # Subnet module
+│   ├── azurerm_virtual_machine/  # Virtual Machine module
+│   └── azurerm_virtual_network/  # Virtual Network module
 │
 └── README.md
 ```
 
 ---
 
-## 🛠️ Technology Stack
+## Prerequisites
 
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=terraform,azure,git,github,vscode"/>
-</p>
+Ensure you have the following installed and configured before deployment:
 
----
+1. **Terraform CLI**: Version `v1.5.0` or higher ([Download Terraform](https://developer.hashicorp.com/terraform/downloads))
+2. **Azure CLI**: Installed and authenticated ([Download Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli))
+3. **Azure Subscription**: Active subscription with permissions to manage resources
 
-## 🚀 Deployment Steps
-
-### Clone Repository
-
-```bash
-git clone <repository-url>
-cd Environment
-```
-
-### Initialize Terraform
-
-```bash
-terraform init
-```
-
-### Validate Configuration
-
-```bash
-terraform validate
-```
-
-### Generate Execution Plan
-
-```bash
-terraform plan
-```
-
-### Deploy Infrastructure
-
-```bash
-terraform apply -auto-approve
-```
-
----
-
-## 🔐 Azure Bastion Benefits
-
-Azure Bastion provides secure browser-based access to Azure Virtual Machines without exposing public IP addresses.
-
-### Advantages
-
-* No public IP on VMs
-* Secure RDP & SSH connectivity
-* Azure Portal integration
-* Reduced attack surface
-* Managed Azure service
-
----
-
-## 📜 Prerequisites
-
-Before deploying this project:
-
-* Terraform v1.5+
-* Azure CLI installed
-* Active Azure Subscription
-* Authenticated Azure account
+Authenticate with your Azure account:
 
 ```bash
 az login
 ```
 
----
+Verify account details:
 
-## 💡 Best Practices Implemented
-
-* Modular Terraform architecture
-* Infrastructure as Code (IaC)
-* Reusable components
-* Secure VM access through Bastion
-* Resource isolation using VNets and Subnets
-* Consistent resource deployment
+```bash
+az account show
+```
 
 ---
 
-## 📈 Learning Outcomes
+## Deployment Guide
 
-* Terraform Module Development
-* Azure Networking
-* Azure Virtual Machines
-* Azure Bastion
-* Azure SQL Services
-* Infrastructure Automation
-* Cloud Security Fundamentals
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/Pjaisw1103/Azurerm_Bastion.git
+cd Azurerm_Bastion/Environment
+```
+
+### Step 2: Initialize Terraform
+
+Initialize provider plugins and modules:
+
+```bash
+terraform init
+```
+
+### Step 3: Validate Configuration
+
+Check syntax and module consistency:
+
+```bash
+terraform validate
+```
+
+### Step 4: Preview Execution Plan
+
+Review planned resource additions:
+
+```bash
+terraform plan
+```
+
+### Step 5: Provision Infrastructure
+
+Apply the configuration to deploy resources:
+
+```bash
+terraform apply
+```
+
+To destroy the deployed infrastructure:
+
+```bash
+terraform destroy
+```
 
 ---
 
-## 🎯 Project Highlights
+## Security Features
 
-<p align="center">
-
-<img src="https://img.shields.io/badge/Modular-Terraform-623CE4?style=for-the-badge"/>
-
-<img src="https://img.shields.io/badge/Azure-Bastion-0078D4?style=for-the-badge"/>
-
-<img src="https://img.shields.io/badge/Azure-SQL-success?style=for-the-badge"/>
-
-<img src="https://img.shields.io/badge/IaC-Automation-orange?style=for-the-badge"/>
-
-</p>
+- **PaaS Bastion Management**: Azure Bastion acts as a managed jump host, preventing direct internet access to RDP (3389) or SSH (22) ports.
+- **Network Isolation**: Compute workloads reside in isolated internal subnets without public IPs.
+- **Explicit Dependencies**: `depends_on` rules enforce structured provisioning order.
 
 ---
 
-## 👩‍💻 Author
+## Author
 
-**Priya Jaiswal**
+**Priya Jaiswal**  
+*Azure Cloud & DevOps Engineer*
 
-Azure Cloud | DevOps | Terraform
+- GitHub: [@Pjaisw1103](https://github.com/Pjaisw1103)
+- LinkedIn: [Priya Jaiswal](https://linkedin.com/in/priya-jaiswal1103)
 
-<p align="center">
-  <a href="https://github.com/Pjaisw1103">
-    <img src="https://img.shields.io/badge/GitHub-Pjaisw1103-181717?style=for-the-badge&logo=github"/>
-  </a>
-
-  <a href="https://linkedin.com/in/priya-jaiswal1103">
-    <img src="https://img.shields.io/badge/LinkedIn-Priya%20Jaiswal-0078D4?style=for-the-badge&logo=linkedin"/>
-  </a>
-</p>
-
----
-
-<p align="center">
-⭐ If you found this project useful, consider giving it a star.
-</p>
